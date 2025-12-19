@@ -1,0 +1,14 @@
+[macro]
+_SETN = "SGN"
+
+[card.sangan]
+id = 99999999
+setnumber = "${_SETN|001}"
+ot = "custom"
+set = "sangan-set"
+attribute = "dark"
+race = "fiend"
+type = "monster effect"
+level = 3
+atk = 1000
+def = 600

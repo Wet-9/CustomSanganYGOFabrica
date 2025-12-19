@@ -1,0 +1,17 @@
+locale = 'en'
+
+[gamedir.main]
+default = true
+path = '''F:\yugioh\ProjectIgnis-EDOPro-41.0.2-windows\ProjectIgnis'''
+
+[picset.regular]
+default = true
+mode = 'proxy'
+size = '256x'
+ext = 'jpg'
+field = true
+
+[expansion.sangan-set]
+recipe = ["expansions/sangan-values.toml", "expansions/sangan-en-us.toml"]
+locale = "en"
+default = true
