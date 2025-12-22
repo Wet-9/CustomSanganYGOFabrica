@@ -5,3 +5,7 @@ effect = "When this card is sent to the GY: Add 1 monster with 1500 or less ATK 
 [card.witch]
 name = "Witch of the Black Forest (Custom)"
 effect = "When this card is sent to the GY: Add 1 monster with 1500 or less DEF from your Deck to your hand, then shuffle your Deck."
+
+[card.lastwill]
+name = "Last Will (Custom)"
+effect = "If a monster is sent from your field to your GY this turn: You can Special Summon 1 monster with 1500 or less ATK from your Deck."

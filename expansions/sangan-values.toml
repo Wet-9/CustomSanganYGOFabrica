@@ -21,3 +21,11 @@ type = "monster effect"
 level = 4
 atk = 1200
 def = 800
+
+[card.lastwill]
+id = 99999997
+setnumber = "${_SETN|003}"
+ot = "custom"
+set = "sangan-set"
+type = "spell normal"
+
