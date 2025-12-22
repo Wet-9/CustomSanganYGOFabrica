@@ -2,7 +2,7 @@ locale = 'en'
 
 [gamedir.main]
 default = true
-path = '''F:\yugioh\ProjectIgnis-EDOPro-41.0.2-windows\ProjectIgnis'''
+path = "./ProjectIgnis"
 
 [picset.regular]
 default = true
