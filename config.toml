@@ -2,7 +2,7 @@ locale = 'en'
 
 [gamedir.main]
 default = true
-path = "$PROJECTIGNIS"
+path = "./ProjectIgnis"
 
 [picset.regular]
 default = true
