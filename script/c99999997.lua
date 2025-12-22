@@ -1,59 +1,61 @@
--- Last Will (Custom)
+-- Last Will (Classic OCG)
 local s,id=GetID()
 function s.initial_effect(c)
-	-- Activate
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
-	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCondition(s.condition)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.operation)
-	e1:SetCountLimit(1,id)
-	c:RegisterEffect(e1)
-
-	-- Track monsters sent from field to GY this turn
-	if not s.global_check then
-		s.global_check=true
-		s.sent_this_turn={}
-		local ge=Effect.CreateEffect(c)
-		ge:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-		ge:SetCode(EVENT_TO_GRAVE)
-		ge:SetOperation(s.checkop)
-		Duel.RegisterEffect(ge,0)
-	end
+    -- Activate
+    local e1=Effect.CreateEffect(c)
+    e1:SetType(EFFECT_TYPE_ACTIVATE)
+    e1:SetCode(EVENT_FREE_CHAIN)
+    e1:SetOperation(s.activate)
+    c:RegisterEffect(e1)
 end
 
-function s.checkop(e,tp,eg,ep,ev,re,r,rp)
-	for tc in eg:Iter() do
-		if tc:IsPreviousLocation(LOCATION_MZONE)
-			and tc:IsPreviousControler(tp) then
-			s.sent_this_turn[tp]=true
-		end
-	end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+    local c=e:GetHandler()
+    -- Register temporary trigger until end of turn
+    local e2=Effect.CreateEffect(c)
+    e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+    e2:SetCode(EVENT_TO_GRAVE)
+    e2:SetProperty(EFFECT_FLAG_DELAY)
+    e2:SetRange(LOCATION_SZONE)
+    e2:SetCondition(s.spcon)
+    e2:SetTarget(s.sptg)
+    e2:SetOperation(s.spop)
+    e2:SetReset(RESET_PHASE+PHASE_END)
+    Duel.RegisterEffect(e2,tp)
 end
 
-function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return s.sent_this_turn[tp]
+-- Condition: monster you controlled was sent from field to GY
+function s.spcon(e,tp,eg,ep,ev,re,r,rp)
+    return eg:IsExists(s.cfilter,1,nil,tp)
 end
 
+function s.cfilter(c,tp)
+    return c:IsMonster()
+        and c:IsPreviousLocation(LOCATION_MZONE)
+        and c:IsPreviousControler(tp)
+end
+
+-- Filter for Special Summon
 function s.spfilter(c,e,tp)
-	return c:IsMonster() and c:IsAttackBelow(1500)
-		and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+    return c:IsMonster() and c:IsAttackBelow(1500)
+        and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then
-		return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-			and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,e,tp)
-	end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
+-- Target
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+    if chk==0 then
+        return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+            and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,e,tp)
+    end
+    Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp)
-	if #g>0 then
-		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-	end
+-- Operation
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+    if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+    local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp)
+    if #g>0 then
+        Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
+    end
 end
